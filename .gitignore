@@ -1,0 +1,6 @@
+# macOS
+.DS_Store
+
+# Python bytecode from scripts/serve.py importing build.py
+__pycache__/
+*.py[cod]

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1125" viewBox="0 0 1800 1125" role="img" aria-label="Placeholder photograph">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="hsl(260 44% 22%)"/>
+      <stop offset=".5" stop-color="hsl(226 40% 44%)"/>
+      <stop offset="1" stop-color="hsl(226 58% 72%)"/>
+    </linearGradient>
+    <radialGradient id="s" cx=".72" cy=".24" r=".8">
+      <stop offset="0" stop-color="hsl(226 92% 84%)" stop-opacity=".7"/>
+      <stop offset="1" stop-color="hsl(260 60% 18%)" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="3"/><feColorMatrix type="saturate" values="0"/></filter>
+  </defs>
+  <rect width="1800" height="1125" fill="url(#g)"/>
+  <rect width="1800" height="1125" fill="url(#s)"/>
+  <g fill="none" stroke="hsl(226 80% 90%)" stroke-opacity=".2" stroke-width="2">
+    <circle cx="1260" cy="281" r="160"/><circle cx="1260" cy="281" r="281" stroke-opacity=".1"/>
+    <path d="M0 810 Q 450 652 900 787 T 1800 720"/>
+    <path d="M0 945 Q 600 810 1200 922 T 1800 855" stroke-opacity=".13"/>
+  </g>
+  <rect width="1800" height="1125" filter="url(#n)" opacity=".15"/>
+  <text x="112" y="113" font-family="ui-monospace, Menlo, monospace" font-size="33" fill="hsl(226 20% 97%)" fill-opacity=".55" letter-spacing="6">PLACEHOLDER</text>
+</svg>

@@ -1,0 +1,32 @@
+{
+  "site": {
+    "title": "Memories",
+    "owner": "Manwar",
+    "eyebrow": "A personal archive",
+    "lede": "Everything worth keeping, filed by the year it happened in. Newest at the top — scroll down and the years run backwards.",
+    "quote": "Time moves in one direction, memory in another.",
+    "author": "William Gibson"
+  },
+  "years": {
+    "2026": {
+      "note": "The year still being written",
+      "quote": "We do not remember days, we remember moments.",
+      "author": "Cesare Pavese"
+    },
+    "2025": {
+      "note": "Long roads and longer tables",
+      "quote": "Memory is the diary that we all carry about with us.",
+      "author": "Oscar Wilde"
+    },
+    "2024": {
+      "note": "Cold starts, warm endings",
+      "quote": "Nothing is ever really lost to us as long as we remember it.",
+      "author": "L. M. Montgomery"
+    },
+    "2023": {
+      "note": "Where all of this began",
+      "quote": "The past beats inside me like a second heart.",
+      "author": "John Banville"
+    }
+  }
+}
