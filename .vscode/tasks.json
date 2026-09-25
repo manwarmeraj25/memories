@@ -1,0 +1,41 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Memories: run in Safari",
+      "type": "shell",
+      "command": "python3 scripts/serve.py --port 8000 --browser safari",
+      "detail": "Serve the site and open it in Safari. Cmd+Shift+B runs this.",
+      "isBackground": true,
+      "problemMatcher": [],
+      "group": { "kind": "build", "isDefault": true },
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      "label": "Memories: build manifest",
+      "type": "shell",
+      "command": "python3 scripts/build.py",
+      "detail": "Rescan assets/images/ and rewrite data/memories.js.",
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true }
+    },
+    {
+      "label": "Memories: serve on the network (phone testing)",
+      "type": "shell",
+      "command": "python3 scripts/serve.py --port 8000 --browser safari --lan",
+      "detail": "Same as running in Safari, but reachable from your phone on the same wi-fi.",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      "label": "Memories: watch (no server)",
+      "type": "shell",
+      "command": "python3 scripts/build.py --watch",
+      "detail": "Rebuild the manifest on every change, for opening index.html from Finder.",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  // Pick one in the Run and Debug panel (Cmd+Shift+D) and press F5.
+  //
+  // VS Code has no Safari debug adapter — nothing can attach to Safari and set
+  // breakpoints there. So "Run in Safari" starts the local server and tells
+  // macOS to open Safari at it. The server opens the browser itself rather
+  // than the config hardcoding a URL, because serve.py moves to the next free
+  // port when 8000 is taken — a fixed URL would open the wrong page.
+  //
+  // Debug the page in Safari's own Web Inspector: enable Settings → Advanced →
+  // "Show features for web developers", then Develop → localhost. The Python
+  // configurations below give real breakpoints in the server and the build.
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run in Safari",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "python3 scripts/serve.py --port 8000 --browser safari",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Run in Safari, reachable from your phone",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "python3 scripts/serve.py --port 8000 --browser safari --lan",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Serve without opening a browser",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "python3 scripts/serve.py --port 8000 --browser none",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Debug the server (serve.py)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/serve.py",
+      "args": ["--port", "8000", "--browser", "safari"],
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Debug the manifest build (build.py)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/build.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    }
+  ]
+}

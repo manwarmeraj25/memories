@@ -16,10 +16,20 @@ import http.server
 import json
 import socket
 import socketserver
+import subprocess
 import sys
 import threading
 import webbrowser
 from pathlib import Path
+
+# What --browser accepts, mapped to the macOS application name
+BROWSERS = {
+    "safari": "Safari",
+    "chrome": "Google Chrome",
+    "firefox": "Firefox",
+    "edge": "Microsoft Edge",
+    "brave": "Brave Browser",
+}
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build  # noqa: E402  (same folder)
@@ -108,12 +118,28 @@ def lan_address():
         s.close()
 
 
+def launch_browser(choice, url):
+    """Open the site in a named browser, falling back to the system default."""
+    app = BROWSERS.get(choice)
+    if app:
+        try:
+            subprocess.run(["open", "-a", app, url], check=True,
+                           capture_output=True, timeout=15)
+            return
+        except (OSError, subprocess.SubprocessError) as err:
+            print(f"  Could not open {app} ({err}); using the default browser.")
+    webbrowser.open(url)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--port", type=int, default=8000)
     ap.add_argument("--no-open", action="store_true",
                     help="don't open a browser window")
+    ap.add_argument("--browser", default="default",
+                    choices=["default", "none", *sorted(BROWSERS)],
+                    help="which browser to open (default: your system default)")
     ap.add_argument("--lan", action="store_true",
                     help="also accept connections from other devices on your "
                          "network, so you can open the site on your phone")
@@ -146,8 +172,9 @@ def main():
     print("  Add a folder like assets/images/2027/ with photographs in it —")
     print("  the section appears in the open page on its own. Ctrl-C to stop.\n")
 
-    if not args.no_open:
-        threading.Timer(0.6, webbrowser.open, args=(url,)).start()
+    choice = "none" if args.no_open else args.browser
+    if choice != "none":
+        threading.Timer(0.6, launch_browser, args=(choice, url)).start()
 
     with Server((host, port), Handler) as httpd:
         try:
