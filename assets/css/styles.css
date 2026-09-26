@@ -905,6 +905,8 @@ html:not(.js) .reveal { opacity: 1; transform: none; }
     rotate 1100ms var(--ease-out) var(--d, 0ms);
 }
 .hero__title.is-lit .ch { opacity: 1; translate: 0 0; rotate: 0deg; }
+/* a hero rebuilt by a live reload appears, it does not replay the intro */
+.hero__title.is-instant .ch { transition: none; }
 html:not(.js) .hero__title .ch { opacity: 1; translate: none; rotate: none; }
 
 @media (prefers-reduced-motion: reduce) {
@@ -967,4 +969,109 @@ html:not(.js) .hero__title .ch { opacity: 1; translate: none; rotate: none; }
 @media (max-width: 620px) {
   /* clear the year rail, which sits along the bottom on small screens */
   .toast { bottom: calc(62px + env(safe-area-inset-bottom, 0px)); }
+}
+
+/* ---------- contact sheet: every frame in a year, at a glance ---------- */
+.grid {
+  position: fixed;
+  inset: 0;
+  z-index: 85;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  background: color-mix(in oklab, var(--bg) 94%, #000);
+  backdrop-filter: blur(18px);
+  opacity: 0;
+  transition: opacity 300ms var(--ease);
+}
+.grid.is-open { opacity: 1; }
+
+.grid__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: max(14px, env(safe-area-inset-top, 0px)) var(--gutter) 14px;
+  border-bottom: 1px solid var(--line);
+}
+.grid__bar h2 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(1.1rem, 2.2vw, 1.7rem);
+  letter-spacing: -0.015em;
+  font-variant-numeric: lining-nums;
+}
+
+.grid__items {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(clamp(96px, 13vw, 168px), 1fr));
+  gap: 5px;
+  padding: 5px var(--gutter) calc(28px + env(safe-area-inset-bottom, 0px));
+  align-content: start;
+}
+
+.grid__cell {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: var(--frame-bg);
+  cursor: zoom-in;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 2px;
+}
+.grid__cell img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.86;
+  transition: transform 500ms var(--ease-out), opacity 400ms var(--ease);
+}
+.grid__cell:hover img,
+.grid__cell:focus-visible img { transform: scale(1.06); opacity: 1; }
+
+/* the control that opens it */
+.year__all {
+  appearance: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 9px 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: none;
+  color: var(--text);
+  transition: background 260ms var(--ease), border-color 260ms var(--ease), color 260ms var(--ease);
+}
+.year__all strong {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 0.94rem;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  font-variant-numeric: lining-nums;
+}
+.year__all span {
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+.year__all:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+.year__all:hover span { color: color-mix(in oklab, var(--accent-ink) 70%, transparent); }
+
+.empty-note code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.86em;
+  color: var(--accent);
+  background: var(--glow);
+  padding: 2px 6px;
+  border-radius: 3px;
 }

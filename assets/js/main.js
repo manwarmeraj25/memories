@@ -7,7 +7,6 @@
 (() => {
   "use strict";
 
-  const DATA = window.MEMORIES || { site: {}, years: [], total: 0 };
   const html = document.documentElement;
   html.classList.add("js");
 
@@ -66,10 +65,20 @@
     html.dataset.theme || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
 
   /* ----------------------------------------------------------------- render */
-  let site = DATA.site || {};
-  let years = Array.isArray(DATA.years) ? DATA.years : [];
-  let total = DATA.total || 0;
+  let site = {};
+  let years = [];
+  let total = 0;
   let flat = [];     // every photograph, in page order — drives the lightbox
+  let heroAnimated = false;   // the title strikes on once, not on every rebuild
+
+  // A year with hundreds of links can't put them all in one rail — that would
+  // be hundreds of screen-heights of sideways scrolling. The rail shows a
+  // selection spread across the year; the contact sheet and the full-size
+  // viewer still reach every one.
+  const RAIL_MAX = 40;
+
+  // How far back to look for year files when nothing tells us which exist.
+  const PROBE_YEARS_BACK = 60;
 
   function renderHero() {
     const host = document.getElementById("hero");
@@ -88,6 +97,16 @@
       title.append(s);
     });
     host.append(title);
+
+    // .hero__title.is-lit is what makes the letters visible at all, so it has
+    // to be applied by whatever builds the title — the hero is rebuilt every
+    // time the archive reloads, and a rebuilt title with no class stays blank.
+    if (heroAnimated || reduceMQ.matches) {
+      title.classList.add("is-lit", "is-instant");
+    } else {
+      heroAnimated = true;
+      requestAnimationFrame(() => title.classList.add("is-lit"));
+    }
 
     const grid = el("div", "hero__grid");
     const lede = el("p", "hero__lede reveal", site.lede || "");
@@ -161,12 +180,15 @@
     media.append(img);
 
     const cap = el("figcaption", "card__cap");
-    cap.append(el("span", "card__title", photo.caption));
-    if (photo.date) cap.append(el("span", "card__date", formatDate(photo.date)));
+    const shown = photo.caption || formatDate(photo.date) || `${year} · ${index + 1}`;
+    cap.append(el("span", "card__title", shown));
+    if (photo.caption && photo.date) {
+      cap.append(el("span", "card__date", formatDate(photo.date)));
+    }
 
     const btn = el("button", "card__btn");
     btn.type = "button";
-    btn.setAttribute("aria-label", `View ${photo.caption} full size`);
+    btn.setAttribute("aria-label", `View ${shown} full size`);
     btn.addEventListener("click", () => openLightbox(photo.flatIndex));
 
     inner.append(
@@ -212,22 +234,32 @@
     rail.setAttribute("role", "list");
 
     if (photos.length) {
-      photos.forEach((p, i) => {
+      photos.forEach((p) => {
         p.flatIndex = flat.length;
         p.year = entry.year;
         flat.push(p);
-        const card = buildCard(p, i, entry.year);
-        card.setAttribute("role", "listitem");
-        rail.append(card);
+      });
+
+      const picks = (entry.rail && entry.rail.length)
+        ? entry.rail
+        : photos.map((_, i) => i);
+
+      picks.forEach((idx, i) => {
+        const p = photos[idx];
+        if (p) {
+          const card = buildCard(p, i, entry.year);
+          card.setAttribute("role", "listitem");
+          rail.append(card);
+        }
       });
     } else {
       const empty = el("figure", "card card--empty");
       const inner = el("div", "card__inner");
       const p = el("p");
       p.append(
-        document.createTextNode("No photographs filed yet. Drop them into "),
-        el("code", null, `assets/images/${entry.year}/`),
-        document.createTextNode(" and re-run the build script.")
+        document.createTextNode("No links yet. Add them to "),
+        el("code", null, `data/years/${entry.year}.json`),
+        document.createTextNode(".")
       );
       inner.append(p);
       empty.append(inner);
@@ -238,8 +270,21 @@
     stage.append(viewport);
 
     const foot = el("div", "year__foot");
-    foot.append(el("span", "year__count",
-      `${photos.length} ${photos.length === 1 ? "photograph" : "photographs"}`));
+    const inRail = (entry.rail || photos).length;
+
+    if (photos.length > inRail) {
+      const all = el("button", "year__all");
+      all.type = "button";
+      all.append(
+        el("strong", null, `View all ${photos.length}`),
+        el("span", null, `${inRail} shown`)
+      );
+      all.addEventListener("click", () => openGrid(entry.year));
+      foot.append(all);
+    } else {
+      foot.append(el("span", "year__count",
+        `${photos.length} ${photos.length === 1 ? "photograph" : "photographs"}`));
+    }
     const track = el("div", "year__track");
     track.append(el("i"));
     foot.append(track);
@@ -263,9 +308,14 @@
     main.replaceChildren();
 
     if (!years.length) {
-      main.append(el("p", "empty-note",
-        "No year folders yet. Create assets/images/2026/, drop photographs in, "
-        + "and the section appears here."));
+      const note = el("p", "empty-note");
+      note.append(
+        document.createTextNode("No years yet. Create "),
+        el("code", null, "data/years/2026.json"),
+        document.createTextNode(" with a list of image links in it and the "
+          + "section appears here — no rebuild, no reload.")
+      );
+      main.append(note);
       return;
     }
     years.forEach((y) => main.append(buildYear(y)));
@@ -561,7 +611,7 @@
     const p = flat[i];
     if (!p) return;
     boxAt = i;
-    boxImg.src = p.src;
+    boxImg.src = p.full || p.src;
     boxImg.alt = `${p.caption}${p.date ? `, ${formatDate(p.date)}` : ""}`;
     boxTitle.textContent = p.caption;
     boxDate.textContent = formatDate(p.date) || p.year;
@@ -623,6 +673,71 @@
     else if (e.key === "ArrowLeft") { e.preventDefault(); step(-1); }
   });
 
+  /* --------------------------------------------------------- contact sheet */
+  const gridPanel = document.getElementById("grid");
+  const gridItems = document.getElementById("grid-items");
+  const gridTitle = document.getElementById("grid-title");
+  let gridHideTimer = 0;
+  let gridReturn = null;
+
+  function openGrid(year) {
+    const entry = years.find((y) => y.year === year);
+    if (!entry || !entry.photos.length) return;
+
+    gridReturn = document.activeElement;
+    gridTitle.textContent = `${year} — ${entry.photos.length} photographs`;
+
+    const frag = document.createDocumentFragment();
+    entry.photos.forEach((photo) => {
+      const cell = el("button", "grid__cell");
+      cell.type = "button";
+      cell.setAttribute("aria-label",
+        `View ${photo.caption || formatDate(photo.date) || "photograph"} full size`);
+
+      const img = el("img");
+      img.src = photo.src;
+      img.alt = "";
+      img.loading = "lazy";
+      img.decoding = "async";
+      cell.append(img);
+
+      cell.addEventListener("click", () => {
+        closeGrid();
+        openLightbox(photo.flatIndex);
+      });
+      frag.append(cell);
+    });
+
+    gridItems.replaceChildren(frag);
+    gridItems.scrollTop = 0;
+
+    clearTimeout(gridHideTimer);
+    gridPanel.hidden = false;
+    requestAnimationFrame(() => gridPanel.classList.add("is-open"));
+    document.body.style.overflow = "hidden";
+    document.getElementById("grid-close").focus({ preventScroll: true });
+  }
+
+  function closeGrid() {
+    if (gridPanel.hidden) return;
+    gridPanel.classList.remove("is-open");
+    if (box.hidden) document.body.style.overflow = "";
+    clearTimeout(gridHideTimer);
+    gridHideTimer = setTimeout(() => {
+      gridPanel.hidden = true;
+      gridItems.replaceChildren();      // release the thumbnails
+    }, reduceMQ.matches ? 0 : 300);
+    gridReturn?.focus?.({ preventScroll: true });
+  }
+
+  document.getElementById("grid-close").addEventListener("click", closeGrid);
+  addEventListener("keydown", (e) => {
+    if (!gridPanel.hidden && box.hidden && e.key === "Escape") {
+      e.preventDefault();
+      closeGrid();
+    }
+  });
+
   /* ------------------------------------------------- live archive syncing */
   /* Served by scripts/serve.py, the page asks whether the image folders have
      changed and rebuilds itself in place — a new year folder becomes a new
@@ -630,7 +745,7 @@
      page quietly stays with the manifest it was shipped with. */
 
   const LIVE = location.protocol === "http:" || location.protocol === "https:";
-  let liveSignature = DATA.signature || null;
+  let liveSignature = null;
   let liveMisses = 0;
   let liveTimer = 0;
   let toastTimer = 0;
@@ -679,13 +794,14 @@
     return ["Archive updated", `${total} photographs`];
   }
 
-  function applyData(data) {
+  function applyData(data, quiet) {
     if (!data || !Array.isArray(data.years)) return;
 
     const previousYears = new Set(years.map((y) => y.year));
     const previousTotal = total;
     const anchor = captureAnchor();
     if (!box.hidden) closeLightbox();
+    if (!gridPanel.hidden) closeGrid();   // its indices are about to go stale
 
     site = data.site || {};
     years = data.years;
@@ -694,6 +810,7 @@
     renderAll();
     restoreAnchor(anchor);
 
+    if (quiet) return;
     const fresh = years.filter((y) => !previousYears.has(y.year)).map((y) => y.year);
     toast(...describeChange(fresh, previousTotal));
   }
@@ -710,9 +827,7 @@
       if (signature === liveSignature) return;
 
       liveSignature = signature;
-      const next = await fetch("api/memories", { cache: "no-store" });
-      if (!next.ok) throw new Error(String(next.status));
-      applyData(await next.json());
+      applyData(await loadArchive());
     } catch {
       if (++liveMisses >= 2 && liveTimer) {
         clearInterval(liveTimer);
@@ -725,6 +840,111 @@
     if (!LIVE || liveTimer) return;
     liveTimer = setInterval(pollArchive, 2000);
     pollArchive();
+  }
+
+  /* ------------------------------------------------------------ the archive */
+  /* There is no build step and no manifest. The page finds which years exist
+     and reads data/years/<year>.json directly, so adding a file is all it
+     takes for a section to appear. */
+
+  function railIndices(count) {
+    if (count <= RAIL_MAX) return Array.from({ length: count }, (_, i) => i);
+    const picks = new Set();
+    for (let i = 0; i < RAIL_MAX; i++) {
+      picks.add(Math.round((i * (count - 1)) / (RAIL_MAX - 1)));
+    }
+    return [...picks].sort((a, b) => a - b);
+  }
+
+  function normalizePhoto(raw, year) {
+    // a bare string is a link; an object may add a caption, date or size
+    const o = typeof raw === "string" ? { src: raw } : (raw || {});
+    const src = (o.src || o.url || o.link || "").trim();
+    if (!src) return null;
+    return {
+      src,
+      full: (o.full || o.large || src).trim(),
+      caption: o.caption || o.title || "",
+      date: o.date || "",
+      w: Number(o.w) || Number(o.width) || 0,
+      h: Number(o.h) || Number(o.height) || 0,
+      year,
+    };
+  }
+
+  async function getJSON(url) {
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error(`${res.status} ${url}`);
+    return res.json();
+  }
+
+  async function discoverYears() {
+    // 1. the dev server knows exactly which files are there
+    try {
+      const d = await getJSON("api/years");
+      if (Array.isArray(d.years) && d.years.length) return d.years;
+    } catch { /* not running under scripts/serve.py */ }
+
+    // 2. the index the server keeps current, for plain static hosting
+    try {
+      const d = await getJSON("data/years/index.json");
+      if (Array.isArray(d.years) && d.years.length) return d.years;
+    } catch { /* no index published */ }
+
+    // 3. nothing to go on — ask for a range of years directly
+    const now = new Date().getFullYear();
+    const candidates = [];
+    for (let y = now + 1; y >= now - PROBE_YEARS_BACK; y--) candidates.push(String(y));
+    const hits = await Promise.all(candidates.map(async (y) => {
+      try {
+        const res = await fetch(`data/years/${y}.json`, { method: "HEAD" });
+        return res.ok ? y : null;
+      } catch {
+        return null;
+      }
+    }));
+    return hits.filter(Boolean);
+  }
+
+  async function loadYear(year) {
+    let raw;
+    try {
+      raw = await getJSON(`data/years/${year}.json`);
+    } catch {
+      return null;
+    }
+    // the file may be the full object, or simply an array of links
+    const list = Array.isArray(raw) ? raw : (raw.photos || raw.images || raw.links || []);
+    const meta = Array.isArray(raw) ? {} : raw;
+    const photos = (Array.isArray(list) ? list : [])
+      .map((p) => normalizePhoto(p, year))
+      .filter(Boolean);
+
+    return {
+      year,
+      note: meta.note || "",
+      quote: meta.quote || "",
+      author: meta.author || "",
+      photos,
+      rail: railIndices(photos.length),
+    };
+  }
+
+  async function loadArchive() {
+    let siteInfo = {};
+    try {
+      siteInfo = await getJSON("site.json");
+    } catch { /* the page has sensible defaults without it */ }
+
+    const found = await discoverYears();
+    const loaded = (await Promise.all(found.map(loadYear))).filter(Boolean);
+    loaded.sort((a, b) => b.year.localeCompare(a.year));
+
+    return {
+      site: siteInfo,
+      years: loaded,
+      total: loaded.reduce((n, y) => n + y.photos.length, 0),
+    };
   }
 
   /* ------------------------------------------------------------------ boot */
@@ -740,11 +960,42 @@
     wake();
   }
 
-  function boot() {
-    renderAll();
-    requestAnimationFrame(() => document.querySelector(".hero__title")?.classList.add("is-lit"));
+  async function boot() {
     addEventListener("load", scheduleMeasure);
     if (document.fonts?.ready) document.fonts.ready.then(scheduleMeasure);
+
+    if (location.protocol === "file:") {
+      // fetch is blocked on file://, so the JSON can never be read this way
+      renderAll();
+      document.getElementById("years").replaceChildren(
+        Object.assign(el("p", "empty-note"), {
+          textContent: "Opened straight from the filesystem, a page can't read "
+            + "its own data files. Run python3 scripts/serve.py and open the "
+            + "address it prints.",
+        })
+      );
+      return;
+    }
+
+    // Read the site's own text first, so the hero is built once, with the real
+    // title. Rendering before this resolves would strike the intro on a title
+    // that is replaced a moment later.
+    try {
+      site = await getJSON("site.json");
+    } catch { /* the page has sensible defaults without it */ }
+
+    renderAll();
+
+    try {
+      applyData(await loadArchive(), true);
+    } catch {
+      document.getElementById("years").replaceChildren(
+        Object.assign(el("p", "empty-note"), {
+          textContent: "Could not read the archive. Check that data/years/ "
+            + "contains at least one <year>.json file.",
+        })
+      );
+    }
     startLiveSync();
   }
 

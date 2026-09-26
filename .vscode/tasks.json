@@ -12,30 +12,29 @@
       "presentation": { "reveal": "always", "panel": "dedicated" }
     },
     {
-      "label": "Memories: build manifest",
-      "type": "shell",
-      "command": "python3 scripts/build.py",
-      "detail": "Rescan assets/images/ and rewrite data/memories.js.",
-      "problemMatcher": [],
-      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true }
-    },
-    {
       "label": "Memories: serve on the network (phone testing)",
       "type": "shell",
       "command": "python3 scripts/serve.py --port 8000 --browser safari --lan",
-      "detail": "Same as running in Safari, but reachable from your phone on the same wi-fi.",
+      "detail": "Same, but reachable from your phone on the same wi-fi.",
       "isBackground": true,
       "problemMatcher": [],
       "presentation": { "reveal": "always", "panel": "dedicated" }
     },
     {
-      "label": "Memories: watch (no server)",
+      "label": "Memories: new year file",
       "type": "shell",
-      "command": "python3 scripts/build.py --watch",
-      "detail": "Rebuild the manifest on every change, for opening index.html from Finder.",
-      "isBackground": true,
+      "command": "python3 scripts/new-year.py ${input:year}",
+      "detail": "Create data/years/<year>.json from a template.",
       "problemMatcher": [],
-      "presentation": { "reveal": "always", "panel": "dedicated" }
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "year",
+      "type": "promptString",
+      "description": "Which year?",
+      "default": "2022"
     }
   ]
 }

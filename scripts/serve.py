@@ -1,19 +1,22 @@
 #!/usr/bin/env python3
-"""Run the archive locally so it builds itself.
+"""Serve the archive and keep it in step with data/years/.
 
-    python3 scripts/serve.py
+    python3 scripts/serve.py --browser safari
 
-Leave it running. Drop a folder like assets/images/2027/ in with some
-photographs and the new section appears in the open page within a couple of
-seconds — no rebuild, no reload. Deleting or renaming files works the same way.
+Leave it running. Drop a file like data/years/2022.json in and the 2022
+section appears in the open page within a couple of seconds — no rebuild, no
+reload. Editing a year's quote or its list of links works the same way.
 
-Every request for the manifest rescans the image folders, so data/memories.js
-on disk is kept in step too and the page still works opened straight from the
-filesystem afterwards.
+There is no build step. The page reads the JSON files directly; this server
+only tells it which years exist and when something changed. It also keeps
+data/years/index.json current so the site works on a plain static host
+(GitHub Pages and the like) with no server at all.
 """
 import argparse
+import hashlib
 import http.server
 import json
+import re
 import socket
 import socketserver
 import subprocess
@@ -21,6 +24,11 @@ import sys
 import threading
 import webbrowser
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+YEARS_DIR = ROOT / "data" / "years"
+INDEX = YEARS_DIR / "index.json"
+YEAR_RE = re.compile(r"^\d{4}$")
 
 # What --browser accepts, mapped to the macOS application name
 BROWSERS = {
@@ -31,45 +39,67 @@ BROWSERS = {
     "brave": "Brave Browser",
 }
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-import build  # noqa: E402  (same folder)
 
-ROOT = build.ROOT
+def year_files():
+    """Every data/years/<year>.json, newest year first."""
+    if not YEARS_DIR.is_dir():
+        return []
+    found = [p for p in YEARS_DIR.glob("*.json") if YEAR_RE.match(p.stem)]
+    return sorted(found, key=lambda p: p.stem, reverse=True)
+
+
+def years():
+    return [p.stem for p in year_files()]
+
+
+def signature():
+    """A cheap fingerprint of the year files — changes when anything does."""
+    parts = []
+    for p in year_files():
+        st = p.stat()
+        parts.append(f"{p.name}:{st.st_mtime_ns}:{st.st_size}")
+    site = ROOT / "site.json"
+    if site.exists():
+        st = site.stat()
+        parts.append(f"site:{st.st_mtime_ns}:{st.st_size}")
+    return hashlib.sha1("|".join(parts).encode()).hexdigest()[:16]
+
+
+def write_index():
+    """Keep the static fallback list current, so no server is needed to deploy."""
+    payload = {"years": years()}
+    try:
+        current = json.loads(INDEX.read_text())
+    except (OSError, ValueError):
+        current = None
+    if current != payload:
+        try:
+            YEARS_DIR.mkdir(parents=True, exist_ok=True)
+            INDEX.write_text(json.dumps(payload, indent=2) + "\n")
+        except OSError:
+            pass
+    return payload
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *a, **kw):
         super().__init__(*a, directory=str(ROOT), **kw)
 
-    # ---------------------------------------------------------------- routes
     def do_GET(self):
         route = self.path.split("?", 1)[0].rstrip("/") or "/"
 
         if route == "/api/signature":
-            return self._json({"signature": build.signature()})
+            return self._json({"signature": signature()})
 
-        if route == "/api/memories":
-            payload, _ = build.scan()
-            build.write_manifest(payload)
-            return self._json(payload)
-
-        if route == "/data/memories.js":
-            payload, _ = build.scan()
-            build.write_manifest(payload)
-            body = ("window.MEMORIES = "
-                    + json.dumps(payload, ensure_ascii=False) + ";\n").encode()
-            return self._send(body, "application/javascript; charset=utf-8")
+        if route == "/api/years":
+            return self._json(write_index())
 
         return super().do_GET()
 
-    # ---------------------------------------------------------------- output
     def _json(self, obj):
-        self._send(json.dumps(obj, ensure_ascii=False).encode(),
-                   "application/json; charset=utf-8")
-
-    def _send(self, body, ctype):
+        body = json.dumps(obj, ensure_ascii=False).encode()
         self.send_response(200)
-        self.send_header("Content-Type", ctype)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Cache-Control", "no-store, must-revalidate")
         self.end_headers()
@@ -79,7 +109,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             pass
 
     def end_headers(self):
-        # the page is being edited while it's open; never serve it from cache
+        # the archive is being edited while it's open; never serve from cache
         if not self.path.startswith("/api/"):
             self.send_header("Cache-Control", "no-store, must-revalidate")
         super().end_headers()
@@ -145,15 +175,17 @@ def main():
                          "network, so you can open the site on your phone")
     args = ap.parse_args()
 
-    # keep the banner and the request log readable when stdout is redirected
     try:
         sys.stdout.reconfigure(line_buffering=True)
     except (AttributeError, ValueError):
         pass
 
-    payload, added = build.scan()
-    build.write_manifest(payload)
-    build.report(payload, added)
+    found = write_index()["years"]
+    if found:
+        print(f"{len(found)} year(s): {', '.join(found)}")
+    else:
+        print(f"No year files yet. Add one at "
+              f"{(YEARS_DIR / '2026.json').relative_to(ROOT)}.")
 
     host = "0.0.0.0" if args.lan else "127.0.0.1"
     port = free_port(host, args.port)
@@ -169,8 +201,8 @@ def main():
             print(f"  On your phone, same wi-fi:  http://{ip}:{port}/")
         print("  (--lan means anyone on this network can view the archive.)")
 
-    print("  Add a folder like assets/images/2027/ with photographs in it —")
-    print("  the section appears in the open page on its own. Ctrl-C to stop.\n")
+    print("  Add a file like data/years/2022.json and the section appears")
+    print("  in the open page on its own. Ctrl-C to stop.\n")
 
     choice = "none" if args.no_open else args.browser
     if choice != "none":

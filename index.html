@@ -30,11 +30,21 @@
 <footer class="foot">
   <div>
     <p class="foot__mark">Still collecting.</p>
-    <p>Add photographs to <code>assets/images/&lt;year&gt;/</code>, then run
-      <code>python3 scripts/build.py</code> to file them.</p>
+    <p>Add a year by creating <code>data/years/&lt;year&gt;.json</code> with your
+      image links in it. The section appears on its own.</p>
   </div>
   <p>Click any frame to open it. Arrow keys move between photographs.</p>
 </footer>
+
+<div class="grid" id="grid" role="dialog" aria-modal="true" aria-labelledby="grid-title" hidden>
+  <div class="grid__bar">
+    <h2 id="grid-title">Contact sheet</h2>
+    <button class="iconbtn" id="grid-close" type="button" aria-label="Close contact sheet">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="grid__items" id="grid-items"></div>
+</div>
 
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
@@ -64,7 +74,6 @@
   </div>
 </div>
 
-<script src="data/memories.js"></script>
 <script src="assets/js/main.js"></script>
 </body>
 </html>

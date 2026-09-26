@@ -1,0 +1,23 @@
+{
+  "note": "The year still being written",
+  "quote": "We do not remember days, we remember moments.",
+  "author": "Cesare Pavese",
+  "photos": [
+    "https://lh3.googleusercontent.com/pw/AP1GczPRdOwq0wib_NB22MkZ4dn1tOg2uX5OduK6Bu0kVbgp8wlrHhg_d5man6rUjbQxG9uG8SVe1PgR3BtD14zmVBSNh-gM9f2snuJnAL1jgRZbxqtocfhfEODo1MzFPpbSr8la9RxDVkxnh4OcUSNR34ln-kA1nnqXmls1dhf4bcpZW55Wogvd1naX0GDvSGNGz9xyzO9xvVddmtWzk8JmRJtTK1S1nS6kK3z2CE-m-khD7i4C1m_lD2DmzGw8068qXrXFniyqgMJxumA5j22uHe_g-_T1bj9GgrILH9V3-L9obFPmqXJQoNhktf1qsaVn2LE8z9uyoCMNghVot_7YFmTIik2-SWcvsHhFRYU2JBBmv6uKMKui-5KD2qnfECL9Zza84Q114soFjO22Og-9zOTomuq8yYD63FcEQMbc8rVumVwdZH7DSyp9ChOu6xnTht7yfBw7EKzYjJ4r_tXXOwcJv2TsykcCPm-x4gWxK6Emrjen5RNx-bgo9XL8tNNye2efZPZwOZ-Cjxpb-t-N-iTHrHHWdpW7vmzHSnftSGmWN0gX7VQMJBuAFlRQ3nthxnfRNYqvGeBAkQeRwv9b7aVsgfW4VIQO0VoQVtkf80jEDZWvegjM8vGzeSMghM-aKh9RgMHM8Rh3ftZFp5pwUJhqK1iuUaHlHJwf21S8NWxEHz9vUQF82kVgenJK2lcdr7zbkINgEg-BWsHj_iYDWYaVkXM_4eAQ94uZBoHPfp7G-SyCjjNuQdlFjv_mh57EnIyxFUk0tZjAzg2RfW5aJ58jPoabpKCwVxzSaoEEu-v6R8GM-mkodv3KsNUQdiOdTRtPcUU8vUt4J2Afuyh5ebwynpqIhEprb3Ha5TpvpHWtVVLsUKDhdk-geqJIlhD5QbO2I0xYdF7pxbWafGNCqHokB6eikzVcl3R4-dFWHR6_IxW8o2-wQSAcs9pY9SWPtMjWSREj9zprS4XMGQl9efGmNI34cqL0zz9HXHsyIxi2aKVVcfM1EQwtiajBPt3yXZxYGunByXZOeBZI5XL1X3ot2U1ABF5WH88WTrSbFBW8jg=w1288-h1718-s-no?authuser=0",
+    "https://picsum.photos/seed/mem-2026-a/1800/1200",
+    "https://picsum.photos/seed/mem-2026-b/1200/1600",
+    "https://picsum.photos/seed/mem-2026-c/1600/1600",
+    {
+      "src": "https://picsum.photos/seed/mem-2026-d/1800/1125",
+      "caption": "Off the map",
+      "date": "2026-05-27"
+    },
+    {
+      "src": "https://picsum.photos/seed/mem-2026-e/1200/1600",
+      "caption": "Someone laughing",
+      "date": "2026-07-11",
+      "w": 1200,
+      "h": 1600
+    }
+  ]
+}
