@@ -4,67 +4,54 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Memories</title>
-<meta name="description" content="A personal photo archive, filed year by year — newest first.">
+<meta name="description" content="A personal photo archive, threaded year by year — newest first.">
 <meta name="color-scheme" content="dark light">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230A0D13'/%3E%3Ccircle cx='16' cy='14' r='6' fill='none' stroke='%23E9A94A' stroke-width='2'/%3E%3Cpath d='M6 26h20' stroke='%23E9A94A' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..700,0..100,0..1;1,9..144,300..500,0..100,0..1&amp;family=Karla:ital,wght@0,400..700;1,400..600&amp;display=swap">
+<meta name="theme-color" content="#080900">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23080900'/%3E%3Cpath d='M4 16h24' stroke='%23D4AF37' stroke-width='1.2'/%3E%3Ccircle cx='16' cy='16' r='3.4' fill='%23D4AF37'/%3E%3C/svg%3E">
+
+<link rel="preload" as="font" type="font/woff2" href="assets/fonts/bodoni-moda-normal-400_700-latin.woff2" crossorigin>
+<link rel="stylesheet" href="assets/fonts/fonts.css">
 <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
 
-<a class="u-sr" href="#years">Skip to the archive</a>
+<a class="u-sr" href="#plane">Skip to the archive</a>
 
-<div class="progress" id="progress" aria-hidden="true"><i></i></div>
-<div class="fx fx--light" id="light" aria-hidden="true"></div>
-<div class="fx fx--vignette" aria-hidden="true"></div>
-<div class="fx fx--grain" aria-hidden="true"></div>
-
-<nav class="yearnav" id="yearnav" aria-label="Jump to a year"></nav>
+<nav class="anchors" id="anchors" aria-label="Jump to a year"></nav>
 
 <header class="hero" id="hero"></header>
 
-<main id="years"></main>
+<main class="plane" id="plane"></main>
 
-<footer class="foot">
-  <div>
-    <p class="foot__mark">Still collecting.</p>
-    <p>Add photographs to <code>assets/images/&lt;year&gt;/</code>, then run
-      <code>python3 scripts/build.py</code> to file them.</p>
-  </div>
-  <p>Click any frame to open it. Arrow keys move between photographs.</p>
+<footer class="tail">
+  <p class="tail__how">Drop photographs into <code>assets/images/&lt;year&gt;/</code>.
+    A new year folder threads itself on.</p>
 </footer>
 
-<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<div class="slip" id="slip" role="status" aria-live="polite" hidden></div>
 
-<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-labelledby="lightbox-title" hidden>
-  <div class="lightbox__bar">
-    <span id="lightbox-year">—</span>
-    <span id="lightbox-index">—</span>
-    <button class="iconbtn" id="lightbox-close" type="button" aria-label="Close">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
-    </button>
+<div class="open" id="open" role="dialog" aria-modal="true" aria-labelledby="open-title" hidden>
+  <div class="open__stage">
+    <img id="open-img" alt="" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E">
   </div>
-
-  <div class="lightbox__stage">
-    <img id="lightbox-img" alt="">
+  <div class="open__rail">
+    <span class="d" id="open-where">—</span>
+    <h2 class="open__title" id="open-title"></h2>
+    <span class="d" id="open-date"></span>
   </div>
-
-  <button class="iconbtn lightbox__nav lightbox__nav--prev" id="lightbox-prev" type="button" aria-label="Previous photograph">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18 9 12l6-6"/></svg>
+  <button class="key open__close" id="open-close" type="button" aria-label="Close">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 7 7 17M7 7l10 10"/></svg>
   </button>
-  <button class="iconbtn lightbox__nav lightbox__nav--next" id="lightbox-next" type="button" aria-label="Next photograph">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+  <button class="key open__step open__step--prev" id="open-prev" type="button" aria-label="Previous photograph">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6 8.5 12l6 6"/></svg>
   </button>
-
-  <div class="lightbox__meta">
-    <h3 id="lightbox-title"></h3>
-    <span id="lightbox-date"></span>
-  </div>
+  <button class="key open__step open__step--next" id="open-next" type="button" aria-label="Next photograph">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg>
+  </button>
 </div>
 
 <script src="data/memories.js"></script>
+<script src="assets/js/vendor/motion.js"></script>
 <script src="assets/js/main.js"></script>
 </body>
 </html>
