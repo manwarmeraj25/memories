@@ -31,7 +31,7 @@ memories/
 │   ├── css/styles.css          all styling (both themes)
 │   ├── js/main.js              the gather, the open view, live sync
 │   ├── js/vendor/motion.js     Motion, vendored — no install, no CDN
-│   ├── fonts/                  Bodoni Moda + Manrope, self-hosted
+│   ├── fonts/                  Archivo Narrow, Karla, Azeret Mono
 │   └── images/
 │       ├── 2026/               one folder per year — this is where your photos go
 │       ├── 2025/
@@ -108,7 +108,8 @@ python3 scripts/build.py
 
 - **The opening** names the archive: the title, who keeps it, your lede and
   quote, and how much is held. Under it the whole archive drifts past as a
-  strip — it slides as you scroll rather than looping on a timer.
+  strip of every photograph, moving on its own. It holds still if your system
+  is set to reduce motion.
 - **Wide screens** — each year's run pins to the viewport and the cord pulls
   as you scroll down through it. The photograph you are on is full size and
   captioned; the others gather toward the ends of the run and fall back into
@@ -123,7 +124,8 @@ python3 scripts/build.py
   that link goes directly to that photograph.
 - **Keyboard** — tabbing to a photograph that is currently gathered pulls the
   cord to it, so the whole archive is reachable without a mouse.
-- **The room follows your system** — silk black at night, pearl by day. The
+- **The room follows your system** — soft charcoal at night, pearl by day,
+  with the light always falling from the upper left so the relief holds. The
   photographs are the only colour either way. The switch at the bottom of the
   year rail overrides it, and the choice is remembered per browser.
 

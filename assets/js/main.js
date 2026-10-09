@@ -63,7 +63,6 @@
   let total = DATA.total || 0;
   let flat = [];          // every photograph in page order — drives the open view
   let runs = [];          // one per year
-  let stopStrip = null;   // the hero strip's scroll driver
 
   /* ---------------------------------------------------------------- build */
 
@@ -263,15 +262,6 @@
       strip.append(track);
       host.append(strip);
 
-      /* the plane moves because you pull it, not on a timer: the whole
-         archive slides as the hero scrolls away */
-      stopStrip?.();
-      stopStrip = null;
-      if (M && !reduceMQ.matches) {
-        stopStrip = M.scroll((p) => {
-          track.style.transform = `translate3d(${(-p * 50).toFixed(3)}%,0,0)`;
-        }, { target: host, offset: ["start start", "end start"] });
-      }
     }
 
     if (M && !reduceMQ.matches) {
