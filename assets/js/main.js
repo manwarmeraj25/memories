@@ -633,6 +633,71 @@
     }
   }
 
+  /* ------------------------------------------------------- depth and light
+     The material needs two things from the pointer: where the viewer is
+     standing, which decides parallax, and where the light falls across a
+     pane of glass. Both are published as custom properties and read
+     entirely in CSS. One rAF, one cached rect, and nothing at all on a
+     touchscreen or under reduced motion. */
+
+  const fineMQ = matchMedia("(hover: hover) and (pointer: fine)");
+
+  (() => {
+    let px = 0, py = 0, sentX = 9, sentY = 9, frame = 0;
+    let lit = null, litRect = null;
+
+    const live = () => fineMQ.matches && !reduceMQ.matches;
+
+    const flush = () => {
+      frame = 0;
+      if (Math.abs(px - sentX) < 0.002 && Math.abs(py - sentY) < 0.002) return;
+      sentX = px; sentY = py;
+      html.style.setProperty("--px", px.toFixed(3));
+      html.style.setProperty("--py", py.toFixed(3));
+    };
+
+    const unlight = () => {
+      if (!lit) return;
+      lit.style.removeProperty("--mx");
+      lit.style.removeProperty("--my");
+      lit = null; litRect = null;
+    };
+
+    addEventListener("pointermove", (e) => {
+      if (e.pointerType !== "mouse" || !live()) return;
+
+      px = e.clientX / innerWidth - 0.5;
+      py = e.clientY / innerHeight - 0.5;
+      if (!frame) frame = requestAnimationFrame(flush);
+
+      /* the specular. The rect is read once on entry, not per move — every
+         pane of glass on this page is fixed, so it cannot go stale under a
+         scroll, and reading it per move would be a layout read per frame. */
+      const pane = e.target.closest?.(".lamp, .key, .anchors") || null;
+      if (pane !== lit) {
+        unlight();
+        if (!pane) return;
+        lit = pane; litRect = pane.getBoundingClientRect();
+      }
+      if (!litRect || !litRect.width) return;
+      const mx = ((e.clientX - litRect.left) / litRect.width) * 100;
+      const my = ((e.clientY - litRect.top) / litRect.height) * 100;
+      lit.style.setProperty("--mx", `${mx.toFixed(1)}%`);
+      lit.style.setProperty("--my", `${my.toFixed(1)}%`);
+    }, { passive: true });
+
+    const clear = () => {
+      html.style.removeProperty("--px");
+      html.style.removeProperty("--py");
+      sentX = sentY = 9;
+      unlight();
+    };
+    addEventListener("blur", clear);
+    addEventListener("resize", unlight, { passive: true });
+    reduceMQ.addEventListener("change", () => { if (!live()) clear(); });
+    fineMQ.addEventListener("change", () => { if (!live()) clear(); });
+  })();
+
   /* ------------------------------------------------------------------ boot */
 
   function paint() {

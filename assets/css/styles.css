@@ -1,88 +1,105 @@
 /* ==========================================================================
-   Memories — one plane, threaded on a cord, pressed into relief.
-   Everything is cut from a single sheet of silk-grey. Nothing is drawn with
-   a border: a thing is raised out of the sheet or pressed into it, lit from
-   the upper left. The cord is a channel carved across the sheet; gold is
-   only ever a bead riding that channel, and only ever a control.
+   Memories — one plane, threaded on a cord, pressed out of clay.
+   Everything is a thick, soft, tinted solid: lit from inside its top edge,
+   shaded inside its lower right, and dropped onto a wide coloured shadow.
+   Nothing is drawn with a border and nothing is transparent. Gold is only
+   ever a bead on the cord, and only ever a control.
    ========================================================================== */
 
 :root {
-  /* the sheet. Every raised surface IS this colour — relief alone separates
-     it from the ground, which is the whole premise. */
-  --silk:     #1A1D21;
-  --shadow:   #121417;   /* the deep: scrims, and what sits behind glass */
-  --gold:     #D4AF37;
-  --graphite: #2B2E33;
-  --slate:    #4A5158;
-  --ink:      #C7C9CC;
-  --ink-dim:  #8A9096;
-  --rule:     rgba(212, 175, 55, .34);
-  --on-gold:  #14110A;
+  /* the table the clay sits on */
+  --silk:     #1C1930;
+  --shadow:   #15122A;   /* what a photograph is pressed into */
+  --gold:     #E2BE5A;
+  --graphite: #342F52;
+  --slate:    #6B6391;
+  --ink:      #EDEAF8;
+  --ink-dim:  #A9A2C6;
+  --rule:     rgba(226, 190, 90, .40);
+  --on-gold:  #1A1405;
 
-  /* the two lights. One above-left, one below-right; nothing else makes an
-     edge anywhere on this page. */
-  --lift: rgba(255, 255, 255, .085);
-  --sink: rgba(0, 0, 0, .64);
+  /* the clay itself. The body is a shade off the table so an object reads
+     as a separate lump; the light and the shade are what inflate it. */
+  --clay:       #282443;
+  --clay-light: rgba(255, 255, 255, .13);
+  --clay-shade: rgba(9, 6, 22, .60);
+  --clay-drop:  rgba(7, 5, 18, .55);
 
   --display: 'Archivo Narrow', 'Helvetica Neue', sans-serif;
   --text:    'Karla', ui-sans-serif, system-ui, -apple-system, sans-serif;
   --data:    'Azeret Mono', ui-monospace, Menlo, monospace;
 
-  --ease: cubic-bezier(.22, .61, .36, 1);
+  --ease:     cubic-bezier(.22, .61, .36, 1);
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
 
-  /* the left rail floats, so the plane keeps clear of it */
-  --gutter: clamp(164px, 11vw, 208px);
+  --gutter: clamp(170px, 11.5vw, 214px);
 
-  --r:    14px;
-  --r-sm: 10px;
+  /* clay is chunky. Nothing here has a small corner. */
+  --r-lg: 36px;
+  --r:    26px;
+  --r-sm: 18px;
   --pill: 999px;
 }
 
-/* the four reliefs. Everything on the page is one of these four. */
+/* The three sizes of lump. The inner light and the inner shade have to
+   scale with the object — the full-size pair inside a 40px button fills it
+   solid and the thing stops reading as clay at all. */
 :root {
-  --raise:    -7px -7px 16px var(--lift),  9px  9px 22px var(--sink);
-  --raise-sm: -3px -3px  7px var(--lift),  4px  4px 10px var(--sink);
-  --press:    inset -3px -3px 7px var(--lift), inset 4px 4px 10px var(--sink);
-  --well:     inset -6px -6px 13px var(--lift), inset 8px 8px 18px var(--sink);
-
-  /* a narrow cut is a different problem: the blur of --press is wider than
-     the element, so it floods and the thing reads as a raised pill. A groove
-     gets one tight shadow on the upper lip and one lit lip just outside it. */
-  --groove-h: inset 0 2px 4px var(--sink), 0 1px 0 var(--lift);
-  --groove-v: inset 2px 0 4px var(--sink), 1px 0 0 var(--lift);
-  --bead: inset 0 1.5px 1px rgba(255, 255, 255, .42), 0 2px 4px var(--sink);
+  --clay-lg:
+    26px 30px 56px -14px var(--clay-drop),
+    inset -11px -11px 22px 0 var(--clay-shade),
+    inset 0 13px 28px 0 var(--clay-light);
+  --clay-md:
+    15px 17px 34px -11px var(--clay-drop),
+    inset -7px -7px 15px 0 var(--clay-shade),
+    inset 0 8px 18px 0 var(--clay-light);
+  --clay-sm:
+    7px 9px 18px -7px var(--clay-drop),
+    inset -4px -4px 9px 0 var(--clay-shade),
+    inset 0 5px 11px 0 var(--clay-light);
+  /* a thumbprint: the same lump pushed in rather than out */
+  --clay-in:
+    inset 10px 11px 20px 0 var(--clay-shade),
+    inset -7px -7px 16px 0 var(--clay-light);
+  --clay-in-sm:
+    inset 4px 5px 9px 0 var(--clay-shade),
+    inset -3px -3px 8px 0 var(--clay-light);
 }
 
-/* daylight: the same sheet in undyed silk. The light moves from a lamp in a
-   dark room to an overcast window — so the highlight goes near-white and the
-   shadow goes cool grey rather than black. */
+/* daylight: the same clay, unfired. The inner light becomes real white and
+   the shade becomes a dusty violet — in a lit room clay shades to its own
+   hue, never to black. */
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
-    --silk:     #E3E5E7;
-    --shadow:   #D4D8DC;
-    --gold:     #6B5310;
-    --graphite: #BFC3C8;
-    --slate:    #7E858C;
-    --ink:      #1B1E21;
-    --ink-dim:  #4E545B;
-    --rule:     rgba(107, 83, 16, .5);
-    --on-gold:  #F7F0DC;
-    --lift: rgba(255, 255, 255, .95);
-    --sink: rgba(136, 145, 156, .42);
+    --silk:     #E7E5F4;
+    --shadow:   #D5D0EA;
+    --gold:     #7A5A12;
+    --graphite: #C6C1E0;
+    --slate:    #8A84AC;
+    --ink:      #211D33;
+    --ink-dim:  #55506E;
+    --rule:     rgba(122, 90, 18, .45);
+    --on-gold:  #FFF8E8;
+    --clay:       #EFEDFA;
+    --clay-light: #FFFFFF;
+    --clay-shade: rgba(168, 160, 206, .52);
+    --clay-drop:  rgba(150, 142, 196, .44);
   }
 }
 :root[data-theme="light"] {
-  --silk:     #E3E5E7;
-  --shadow:   #D4D8DC;
-  --gold:     #6B5310;
-  --graphite: #BFC3C8;
-  --slate:    #7E858C;
-  --ink:      #1B1E21;
-  --ink-dim:  #4E545B;
-  --rule:     rgba(107, 83, 16, .5);
-  --on-gold:  #F7F0DC;
-  --lift: rgba(255, 255, 255, .95);
-  --sink: rgba(136, 145, 156, .42);
+  --silk:     #E7E5F4;
+  --shadow:   #D5D0EA;
+  --gold:     #7A5A12;
+  --graphite: #C6C1E0;
+  --slate:    #8A84AC;
+  --ink:      #211D33;
+  --ink-dim:  #55506E;
+  --rule:     rgba(122, 90, 18, .45);
+  --on-gold:  #FFF8E8;
+  --clay:       #EFEDFA;
+  --clay-light: #FFFFFF;
+  --clay-shade: rgba(168, 160, 206, .52);
+  --clay-drop:  rgba(150, 142, 196, .44);
 }
 
 /* ------------------------------------------------------------------ base */
@@ -91,35 +108,55 @@
 
 html { -webkit-text-size-adjust: 100%; scrollbar-color: var(--graphite) transparent; }
 
+/* the table, with three soft lumps of colour worked into it */
 body {
   margin: 0;
-  background: var(--silk);
+  background:
+    radial-gradient(44% 38% at 13% 10%, rgba(102, 88, 180, .36), transparent 70%),
+    radial-gradient(38% 33% at 89% 17%, rgba(156, 120, 50, .24), transparent 70%),
+    radial-gradient(48% 42% at 74% 93%, rgba(52, 114, 112, .26), transparent 72%),
+    var(--silk);
+  background-attachment: fixed;
   color: var(--ink);
   font: 400 clamp(14px, .4vw + 12.6px, 16px)/1.62 var(--text);
   font-feature-settings: "kern" 1;
 }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) body {
+    background:
+      radial-gradient(44% 38% at 13% 10%, rgba(197, 188, 243, .62), transparent 70%),
+      radial-gradient(38% 33% at 89% 17%, rgba(243, 221, 176, .50), transparent 70%),
+      radial-gradient(48% 42% at 74% 93%, rgba(179, 218, 210, .48), transparent 72%),
+      var(--silk);
+  }
+}
+:root[data-theme="light"] body {
+  background:
+    radial-gradient(44% 38% at 13% 10%, rgba(197, 188, 243, .62), transparent 70%),
+    radial-gradient(38% 33% at 89% 17%, rgba(243, 221, 176, .50), transparent 70%),
+    radial-gradient(48% 42% at 74% 93%, rgba(179, 218, 210, .48), transparent 72%),
+    var(--silk);
+}
 
 ::selection { background: var(--gold); color: var(--on-gold); }
 
-/* relief is a weak affordance and a terrible focus indicator. The ring stays
-   a hard gold line, unsoftened, and it is the one real edge on the page. */
+/* Soft edges are a soft affordance. The focus ring stays a hard gold line
+   and is the only sharp edge anywhere on the page. */
 :where(a, button, [tabindex]):focus-visible {
-  outline: 2px solid var(--gold);
-  outline-offset: 4px;
+  outline: 3px solid var(--gold);
+  outline-offset: 5px;
   border-radius: var(--r-sm);
 }
 
-::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar { width: 12px; height: 12px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--graphite); border-radius: var(--pill); }
 
 h1, h2 { margin: 0; font-weight: 400; }
-svg { fill: none; stroke: currentColor; stroke-width: 1.3; stroke-linecap: round; }
+svg { fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
 
 code { font: 300 .86em/1 var(--data); color: var(--ink-dim); }
 
-/* the small tracked readouts: dates, counts, positions. measurement, which
-   is the only thing a mono is allowed to be here. */
 .d {
   font: 300 .68rem/1 var(--data);
   letter-spacing: .14em;
@@ -130,92 +167,117 @@ code { font: 300 .86em/1 var(--data); color: var(--ink-dim); }
 .u-sr {
   position: absolute; left: -9999px; top: 0;
   background: var(--gold); color: var(--on-gold);
-  padding: .7em 1.2em; z-index: 90;
+  padding: .8em 1.3em; z-index: 90; border-radius: 0 0 var(--r-sm) 0;
   font: 400 .72rem/1 var(--display); letter-spacing: .18em; text-transform: uppercase;
 }
 .u-sr:focus { left: 0; }
 
+/* ----------------------------------------------------------- the material */
+/* One lump, three sizes. Everything below is one of them, pushed out of the
+   table or pressed back into it. */
+
+.anchors, .lamp, .key, .hero__read, .open__rail, .slip, .pane__frame {
+  background: var(--clay);
+  border: 0;
+}
+
+/* clay warms where a hand has been on it. JS publishes --mx / --my. */
+.anchors, .lamp, .key { position: relative; }
+.anchors::after, .lamp::after, .key::after {
+  content: ""; position: absolute; inset: 0;
+  border-radius: inherit; pointer-events: none;
+  background: radial-gradient(12em 12em at var(--mx, 50%) var(--my, 0%),
+                              rgba(255, 255, 255, .10), transparent 66%);
+  opacity: 0; transition: opacity 340ms var(--ease);
+}
+.anchors:hover::after, .lamp:hover::after, .key:hover::after { opacity: 1; }
+
 /* --------------------------------------------------------- the anchors */
-/* The rail lifts off the page as one moulded strip. A channel is carved down
-   its spine; each year is a dimple in that channel, and the year you are in
-   is the one bead raised out of it. */
+/* The rail is one thick slab of clay with the cord pressed into its face
+   and a thumbprint around the year you are in. */
 
 .anchors {
   position: fixed; z-index: 50;
   left: clamp(12px, 1.4vw, 20px);
   top: 50%; translate: 0 -50%;
-  display: flex; flex-direction: column; align-items: stretch; gap: 2px;
-  padding: 12px 8px;
-  background: var(--silk);
-  border-radius: var(--pill);
-  box-shadow: var(--raise);
+  display: flex; flex-direction: column; align-items: stretch; gap: 4px;
+  padding: 14px 10px;
+  border-radius: var(--r-lg);
+  box-shadow: var(--clay-lg);
   pointer-events: auto;
   max-height: calc(100svh - 28px);
   overflow-y: auto; scrollbar-width: none;
 }
 .anchors::-webkit-scrollbar { display: none; }
-/* the channel the beads ride */
+
+/* the cord, rolled into the clay */
 .anchors::before {
   content: ""; position: absolute;
-  left: 22px; margin-left: -5px; width: 10px;
-  top: 20px; bottom: 60px;
+  left: 23px; margin-left: -2px; width: 4px;
+  top: 26px; bottom: 66px;
   border-radius: var(--pill);
   background: var(--shadow);
-  box-shadow: var(--groove-v);
+  box-shadow: var(--clay-in-sm);
+  pointer-events: none;
 }
 
 .anchor {
   pointer-events: auto;
   appearance: none; background: none; border: 0; cursor: pointer;
-  position: relative; width: 64px; padding: 11px 0;
+  position: relative; z-index: 1;
+  width: 68px; padding: 12px 0;
   display: block; text-align: left;
-  border-radius: var(--pill);
+  border-radius: var(--r-sm);
   font: 400 .66rem/1 var(--display);
   letter-spacing: .2em;
-  color: var(--ink-dim);
+  color: var(--ink);
   font-variant-numeric: tabular-nums;
-  transition: color 240ms var(--ease), box-shadow 240ms var(--ease);
+  transition: color 240ms var(--ease), box-shadow 300ms var(--ease),
+              scale 220ms var(--ease-out);
 }
 .anchor i {
-  position: absolute; left: 18px; top: 50%; margin-top: -4px;
-  width: 8px; height: 8px; border-radius: 50%;
-  background: var(--ink-dim);
-  box-shadow: none;
-  transition: background 240ms var(--ease), box-shadow 240ms var(--ease);
+  position: absolute; left: 19px; top: 50%; margin-top: -5px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--ink-dim);   /* --slate measured 2.64:1 on dark clay */
+  transition: background 240ms var(--ease), box-shadow 240ms var(--ease),
+              scale 260ms var(--ease-out);
 }
-.anchor span { display: block; margin-left: 34px; }
-.anchor:hover { color: var(--ink); }
-.anchor:hover:not(.is-at) { box-shadow: var(--raise-sm); }
-.anchor:active { box-shadow: var(--press); }
+.anchor span { display: block; margin-left: 36px; }
+.anchor:hover { box-shadow: var(--clay-sm); }
+.anchor:active { scale: .96; box-shadow: var(--clay-in-sm); }
 
-/* you are here: the row sinks into the sheet and its bead rises out of it */
-.anchor.is-at { color: var(--gold); box-shadow: var(--press); }
-.anchor.is-at i { background: var(--gold); box-shadow: var(--bead); }
+/* you are here: a thumbprint in the slab, with the bead sitting proud of it */
+.anchor.is-at { color: var(--gold); box-shadow: var(--clay-in); }
+.anchor.is-at i {
+  background: var(--gold); scale: 1.2;
+  box-shadow: inset 0 2px 1px rgba(255, 255, 255, .45),
+              0 3px 6px -1px var(--clay-drop);
+}
 
 .lamp {
   pointer-events: auto;
-  appearance: none; border: 0; background: var(--silk);
+  appearance: none; cursor: pointer;
   margin: 14px auto 2px;
-  width: 38px; height: 38px; border-radius: 50%;
+  width: 46px; height: 46px; border-radius: 50%;
   display: grid; place-items: center;
-  color: var(--ink-dim); cursor: pointer;
-  box-shadow: var(--raise-sm);
-  transition: color 200ms var(--ease), box-shadow 200ms var(--ease);
+  color: var(--ink);
+  box-shadow: var(--clay-sm);
+  transition: color 200ms var(--ease), scale 220ms var(--ease-out),
+              box-shadow 240ms var(--ease);
 }
-.lamp:hover { color: var(--gold); }
-.lamp:active { box-shadow: var(--press); }
-.lamp svg { width: 16px; height: 16px; }
+.lamp:hover { color: var(--gold); box-shadow: var(--clay-md); }
+.lamp:active { scale: .9; box-shadow: var(--clay-in-sm); }
+.lamp svg { width: 18px; height: 18px; position: relative; z-index: 1; }
 
 
 /* -------------------------------------------------------------- the hero */
-/* What this is, before you start pulling it. */
 
 .hero {
   position: relative;
   min-height: 100vh; min-height: 100svh;
   display: flex; flex-direction: column; justify-content: center;
   padding: clamp(60px, 10vh, 120px) var(--gutter)
-           clamp(206px, 26vh, 300px);
+           clamp(214px, 27vh, 310px);
 }
 
 .hero__title {
@@ -223,7 +285,7 @@ code { font: 300 .86em/1 var(--data); color: var(--ink-dim); }
   font: 400 clamp(2.6rem, 8.4vw, 6.6rem)/1 var(--display);
   letter-spacing: .14em; text-transform: uppercase;
   color: var(--ink);
-  text-shadow: -1px -1px 1px var(--lift), 2px 3px 5px var(--sink);
+  translate: calc(var(--px, 0) * 10px) calc(var(--py, 0) * 6px);
 }
 .hero__title .ch { display: inline-block; }
 
@@ -232,16 +294,19 @@ code { font: 300 .86em/1 var(--data); color: var(--ink-dim); }
   font: 400 .74rem/1.4 var(--display);
   letter-spacing: .2em; text-transform: uppercase;
   color: var(--gold);
+  translate: calc(var(--px, 0) * 7px) calc(var(--py, 0) * 4px);
 }
 
 .hero__lede {
   margin: 0 0 clamp(18px, 2.8vh, 30px);
   max-width: 46ch; font-size: 1.04rem; color: var(--ink);
+  translate: calc(var(--px, 0) * 6px) calc(var(--py, 0) * 3px);
 }
 
 .hero__quote {
   margin: 0; max-width: 42ch;
   font-size: .94rem; line-height: 1.55; color: var(--ink-dim);
+  translate: calc(var(--px, 0) * 4px) calc(var(--py, 0) * 2px);
 }
 .hero__quote cite {
   display: block; margin-top: .7em; font-style: normal;
@@ -249,56 +314,55 @@ code { font: 300 .86em/1 var(--data); color: var(--ink-dim); }
   letter-spacing: .2em; text-transform: uppercase; color: var(--gold);
 }
 
-/* the cord: a channel carved across the sheet, with the measure of the
-   archive sunk into a trough beneath it */
+/* the cord: a coil of clay rolled out across the table, with one bead on it */
 .hero__cord {
   position: absolute;
   left: var(--gutter); right: clamp(24px, 5vw, 86px);
-  bottom: clamp(172px, 21vh, 250px);
-  height: 10px;
+  bottom: clamp(182px, 22vh, 262px);
+  height: 9px;
   border-radius: var(--pill);
-  background: var(--shadow);
-  box-shadow: var(--groove-h);
+  background: var(--clay);
+  box-shadow: var(--clay-sm);
 }
 .hero__cord::before {
-  content: ""; position: absolute; left: 0; top: -3px;
-  width: 16px; height: 16px; border-radius: 50%;
-  background: var(--gold);
-  box-shadow: var(--bead);
+  content: ""; position: absolute; left: -3px; top: 50%;
+  width: 20px; height: 20px; margin-top: -10px;
+  border-radius: 50%; background: var(--gold);
+  box-shadow: inset 0 3px 2px rgba(255, 255, 255, .42),
+              inset -3px -4px 7px rgba(0, 0, 0, .22),
+              7px 8px 15px -5px var(--clay-drop);
 }
 .hero__read {
-  position: absolute; left: 0; top: calc(100% + 18px);
+  position: absolute; left: 0; top: calc(100% + 22px);
   margin: 0;
   display: flex; flex-wrap: wrap;
   gap: 9px clamp(16px, 2.6vw, 38px);
-  padding: 12px clamp(18px, 2vw, 28px);
+  padding: 15px clamp(22px, 2.4vw, 32px);
   border-radius: var(--pill);
-  background: var(--shadow);
-  box-shadow: var(--press);
+  box-shadow: var(--clay-in);
 }
 
-/* the plane edge-on: every photograph, drifting through a carved slot */
+/* the plane edge-on: little tiles of clay, running in a pressed trough */
 .hero__strip {
   position: absolute; left: 0; right: 0;
   bottom: clamp(26px, 4.6vh, 64px);
-  padding: 11px 0;
-  border-radius: var(--r);
-  background: var(--shadow);
-  box-shadow: var(--press);
+  padding: 13px 0;
   overflow: hidden;
+  translate: calc(var(--px, 0) * -12px) 0;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 11%, #000 89%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 11%, #000 89%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 11%, #000 89%, transparent);
 }
 .hero__track {
-  display: flex; gap: 10px; width: max-content;
+  display: flex; gap: 14px; width: max-content;
   will-change: transform;
   animation: drift 90s linear infinite;
 }
 @keyframes drift { to { transform: translateX(-50%); } }
 .hero__track img {
   height: clamp(44px, 7vh, 72px); width: auto;
-  object-fit: cover; opacity: .6;
-  border-radius: 6px;
+  object-fit: cover; opacity: .72;
+  border-radius: var(--r-sm);
+  box-shadow: 7px 9px 16px -8px var(--clay-drop);
 }
 
 /* ------------------------------------------------------------ the plane */
@@ -312,33 +376,33 @@ code { font: 300 .86em/1 var(--data); color: var(--ink-dim); }
   overflow: hidden;
 }
 
-/* the cord: one channel carved across the plane, with the bead at the centre.
-   It runs off both edges — the stage clips the ends, so the groove reads as
-   continuous rather than as a capsule lying on the page. */
+/* the cord across the plane, with the bead at the centre */
 .run__cord {
-  position: absolute; left: -24px; right: -24px; top: calc(62% - 5px);
-  height: 10px;
+  position: absolute; left: -30px; right: -30px; top: calc(62% - 4px);
+  height: 9px;
   border-radius: var(--pill);
-  background: var(--shadow);
-  box-shadow: var(--groove-h);
+  background: var(--clay);
+  box-shadow: var(--clay-sm);
 }
 .run__cord::after {
   content: ""; position: absolute; left: 50%; top: 50%;
-  width: 16px; height: 16px; margin: -8px 0 0 -8px;
+  width: 20px; height: 20px; margin: -10px 0 0 -10px;
   border-radius: 50%; background: var(--gold);
-  box-shadow: var(--bead);
+  box-shadow: inset 0 3px 2px rgba(255, 255, 255, .42),
+              inset -3px -4px 7px rgba(0, 0, 0, .22),
+              7px 8px 15px -5px var(--clay-drop);
 }
 
-/* the year, struck into the sheet at full scale */
+/* the year, moulded out of the table itself */
 .run__year {
   position: absolute; left: var(--gutter); top: 12%;
   font: 400 clamp(2.4rem, 5.6vw, 4.8rem)/1 var(--display);
   letter-spacing: .1em;
-  color: color-mix(in oklab, var(--silk) 30%, var(--gold));
-  text-shadow: -2px -2px 4px var(--lift), 3px 3px 7px var(--sink);
+  color: var(--gold);
   font-variant-numeric: lining-nums;
   pointer-events: none;
   z-index: 3;
+  translate: calc(var(--px, 0) * 3px) calc(var(--py, 0) * 2px);
 }
 
 .run__said {
@@ -347,6 +411,7 @@ code { font: 300 .86em/1 var(--data); color: var(--ink-dim); }
   max-width: 30ch;
   pointer-events: none;
   z-index: 3;
+  translate: calc(var(--px, 0) * 5px) calc(var(--py, 0) * 3px);
 }
 .run__note { margin: 0; font-size: .92rem; line-height: 1.5; color: var(--ink); }
 .run__quote {
@@ -367,32 +432,45 @@ code { font: 300 .86em/1 var(--data); color: var(--ink-dim); }
   transform-origin: center center;
 }
 
-/* raised out of the sheet, not mounted on it: the same silk underneath, and
-   the relief is the only thing holding it off the page */
+/* a photograph is pressed into a lump of clay. The lip is deliberately
+   thin — enough that the frame reads as moulded, not so much that it
+   becomes a mount. */
 .pane__frame {
   position: relative; display: block;
-  appearance: none; border: 0; padding: 0;
-  background: var(--silk);
+  appearance: none; padding: 11px;
   cursor: pointer;
   height: clamp(180px, 46vh, 460px);
   aspect-ratio: var(--ar, 1.5);
-  border-radius: var(--r);
-  box-shadow: var(--raise);
-  overflow: hidden;
+  border-radius: var(--r-lg);
+  box-shadow: var(--clay-lg);
+  transition: scale 420ms var(--ease-out), box-shadow 420ms var(--ease);
 }
-.pane__frame img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.pane__frame:active { box-shadow: var(--raise-sm); }
+.pane__frame img {
+  display: block; width: 100%; height: 100%; object-fit: cover;
+  border-radius: calc(var(--r-lg) - 11px);
+  background: var(--shadow);
+}
+/* the photograph sits down in the clay, not on top of it */
+.pane__frame::before {
+  content: ""; position: absolute; inset: 11px; z-index: 1;
+  border-radius: calc(var(--r-lg) - 11px);
+  pointer-events: none;
+  box-shadow: inset 0 3px 7px rgba(0, 0, 0, .30),
+              inset 0 -1px 0 rgba(255, 255, 255, .10);
+}
+.pane__frame:active { scale: .985; box-shadow: var(--clay-md); }
 
-/* gathered cloth falls into shadow; only the one you are on is fully lit */
+/* gathered clay goes back into shade; only the one you are on is lit */
 .pane__frame::after {
-  content: ""; position: absolute; inset: 0;
+  content: ""; position: absolute; inset: 0; z-index: 2;
+  border-radius: var(--r-lg);
   background: var(--shadow);
   opacity: var(--dim, 0);
   pointer-events: none;
 }
 
 .pane__cap {
-  position: absolute; left: 0; top: calc(100% + 17px);
+  position: absolute; left: 4px; top: calc(100% + 18px);
   display: flex; align-items: baseline; gap: 14px;
   white-space: nowrap;
   opacity: var(--lit, 0);
@@ -405,10 +483,11 @@ code { font: 300 .86em/1 var(--data); color: var(--ink-dim); }
 
 /* the bead this photograph hangs from */
 .pane__node {
-  position: absolute; left: 0; top: -24px;
-  width: 10px; height: 10px; border-radius: 50%;
+  position: absolute; left: 4px; top: -28px;
+  width: 13px; height: 13px; border-radius: 50%;
   background: var(--gold);
-  box-shadow: var(--bead);
+  box-shadow: inset 0 2px 1px rgba(255, 255, 255, .42),
+              5px 6px 11px -4px var(--clay-drop);
   opacity: var(--lit, 0);
 }
 
@@ -422,9 +501,9 @@ code { font: 300 .86em/1 var(--data); color: var(--ink-dim); }
 .tail::before {
   content: ""; position: absolute; top: 0;
   left: var(--gutter); right: clamp(24px, 5vw, 86px);
-  height: 10px; border-radius: var(--pill);
+  height: 6px; border-radius: var(--pill);
   background: var(--shadow);
-  box-shadow: var(--groove-h);
+  box-shadow: var(--clay-in-sm);
 }
 .tail__how { margin: 0; max-width: 58ch; font-size: .86rem; color: var(--ink-dim); }
 
@@ -434,12 +513,11 @@ code { font: 300 .86em/1 var(--data); color: var(--ink-dim); }
   position: fixed; z-index: 60; left: var(--gutter); bottom: 26px;
   bottom: max(26px, env(safe-area-inset-bottom));
   max-width: min(84vw, 32ch);
-  background: var(--silk);
   border-radius: var(--r);
-  box-shadow: var(--raise);
-  padding: 14px 18px;
-  opacity: 0; transform: translateY(8px);
-  transition: opacity 300ms var(--ease), transform 300ms var(--ease);
+  box-shadow: var(--clay-md);
+  padding: 16px 20px;
+  opacity: 0; transform: translateY(12px) scale(.96);
+  transition: opacity 300ms var(--ease), transform 380ms var(--ease-out);
 }
 .slip[hidden] { display: none; }
 .slip.is-up { opacity: 1; transform: none; }
@@ -455,40 +533,51 @@ code { font: 300 .86em/1 var(--data); color: var(--ink-dim); }
 .open {
   position: fixed; inset: 0; z-index: 80;
   display: grid; grid-template-rows: 1fr auto;
-  background: var(--silk);
+  background:
+    radial-gradient(52% 46% at 16% 8%, rgba(102, 88, 180, .40), transparent 70%),
+    radial-gradient(46% 40% at 86% 94%, rgba(52, 114, 112, .28), transparent 72%),
+    var(--silk);
   opacity: 0;
 }
 .open[hidden] { display: none; }
 .open.is-open { opacity: 1; }
 
+/* flex, not grid: the row of a grid whose template is `auto` is an
+   indefinite height, so `max-height: 100%` on the photograph resolved to
+   nothing and it ran out of the bottom of the stage and behind the caption
+   bar. A flex container with a definite height gives the percentage
+   something real to resolve against. */
 .open__stage {
-  display: grid; place-items: center; min-height: 0;
-  padding: clamp(24px, 6vh, 64px) clamp(74px, 9vw, 146px) clamp(10px, 1.8vh, 20px);
+  display: flex; align-items: center; justify-content: center;
+  min-height: 0; min-width: 0;
+  padding: clamp(24px, 6vh, 64px) clamp(80px, 9vw, 152px) clamp(10px, 1.8vh, 20px);
 }
 .open__stage img {
-  max-width: 100%; max-height: 100%; object-fit: contain;
+  max-width: 100%; max-height: 100%;
+  min-width: 0; min-height: 0;
+  object-fit: contain;
   border-radius: var(--r);
-  box-shadow: var(--raise);
+  box-shadow: 22px 26px 50px -16px var(--clay-drop);
 }
 
-/* the caption sits in a trough cut below the photograph */
+/* the caption, pressed into the table under the photograph */
 .open__rail {
   position: relative;
-  margin: clamp(20px, 3.4vh, 38px) clamp(24px, 6vw, 72px)
+  margin: clamp(18px, 3vh, 34px) clamp(24px, 6vw, 72px)
           clamp(16px, 2.4vh, 26px);
   margin-bottom: max(clamp(16px, 2.4vh, 26px), env(safe-area-inset-bottom));
-  padding: clamp(14px, 2.2vh, 22px) clamp(20px, 3vw, 32px)
-           clamp(14px, 2.2vh, 22px) clamp(44px, 5vw, 60px);
+  padding: clamp(16px, 2.4vh, 24px) clamp(24px, 3vw, 36px)
+           clamp(16px, 2.4vh, 24px) clamp(54px, 5.4vw, 70px);
   display: flex; align-items: baseline; gap: clamp(14px, 3vw, 38px);
   border-radius: var(--r);
-  background: var(--shadow);
-  box-shadow: var(--press);
+  box-shadow: var(--clay-in);
 }
 .open__rail::before {
-  content: ""; position: absolute; left: clamp(20px, 3vw, 32px); top: 50%;
-  width: 12px; height: 12px; margin-top: -6px;
+  content: ""; position: absolute; left: clamp(22px, 3vw, 34px); top: 50%;
+  width: 16px; height: 16px; margin-top: -8px;
   border-radius: 50%; background: var(--gold);
-  box-shadow: var(--bead);
+  box-shadow: inset 0 2px 2px rgba(255, 255, 255, .42),
+              5px 6px 11px -4px var(--clay-drop);
 }
 .open__title {
   font: 400 clamp(1rem, 2.2vw, 1.45rem)/1 var(--display);
@@ -496,37 +585,38 @@ code { font: 300 .86em/1 var(--data); color: var(--ink-dim); }
 }
 .open__rail .d:last-child { margin-left: auto; }
 
-/* the three keys: moulded, and they actually travel when you push them */
+/* the three keys: buttons of clay, and they squash when you push them */
 .key {
   position: absolute; appearance: none; cursor: pointer;
-  width: 46px; height: 46px; display: grid; place-items: center;
-  color: var(--ink-dim); background: var(--silk);
-  border: 0; border-radius: 50%;
-  box-shadow: var(--raise-sm);
-  transition: color 200ms var(--ease), box-shadow 200ms var(--ease);
+  width: 54px; height: 54px; display: grid; place-items: center;
+  color: var(--ink);
+  border-radius: 50%;
+  box-shadow: var(--clay-sm);
+  transition: color 200ms var(--ease), scale 220ms var(--ease-out),
+              box-shadow 240ms var(--ease);
 }
-.key:hover { color: var(--gold); box-shadow: var(--raise); }
-.key:active { color: var(--gold); box-shadow: var(--press); }
-.key svg { width: 18px; height: 18px; }
-.open__close { top: 24px; right: 24px; }
+.key:hover { color: var(--gold); box-shadow: var(--clay-md); }
+.key:active { color: var(--gold); scale: .9; box-shadow: var(--clay-in-sm); }
+.key svg { width: 20px; height: 20px; position: relative; z-index: 1; }
+.open__close { top: 26px; right: 26px; }
 .open__step { top: calc(50% - 56px); }
 .open__step--prev { left: clamp(10px, 1.8vw, 24px); }
 .open__step--next { right: clamp(10px, 1.8vw, 24px); }
 
 /* ------------------------------------------------------------------ flat
    phones, short windows, reduced motion: nothing gathers. The plane lies
-   open and you scroll it. The relief stays — it is the surface, not the
+   open and you scroll it. The clay stays — it is the material, not the
    motion. ---------------------------------------------------------------- */
 
 .flat .run__stage { position: static; height: auto; overflow: visible; }
 .flat .run__cord { display: none; }
 .flat .run__year {
-  position: static; transform: none; display: block;
+  position: static; transform: none; translate: none; display: block;
   padding: 9vh clamp(22px, 7vw, 140px) .25em;
   font-size: clamp(2.2rem, 12vw, 3.4rem);
 }
 .flat .run__said {
-  position: static; max-width: 34ch;
+  position: static; max-width: 34ch; translate: none;
   padding: 0 clamp(22px, 7vw, 140px) 4.5vh;
 }
 .flat .thread {
@@ -537,41 +627,36 @@ code { font: 300 .86em/1 var(--data); color: var(--ink-dim); }
 .flat .pane__frame { height: auto; width: 100%; }
 .flat .pane__frame::after { opacity: 0; }
 .flat .pane__cap {
-  position: static; opacity: 1; margin-top: 16px; white-space: normal;
+  position: static; opacity: 1; margin-top: 18px; white-space: normal;
 }
 .flat .pane__node { display: none; }
 
 @media (max-width: 880px), (max-height: 540px) {
-  /* the rail unmoulds and re-moulds as a dock lifted off the bottom edge */
+  /* the slab is re-rolled as a bar of clay lying along the bottom edge */
   .anchors {
     left: 10px; right: 10px; top: auto;
     bottom: max(10px, env(safe-area-inset-bottom));
     translate: none;
     width: auto; height: auto;
-    flex-direction: row; align-items: center; gap: 4px;
-    padding: 7px 8px;
+    flex-direction: row; align-items: center; gap: 5px;
+    padding: 8px 9px;
     border-radius: var(--r);
-    box-shadow: var(--raise);
+    box-shadow: var(--clay-md);
     overflow-x: auto; scrollbar-width: none;
   }
-  .anchors::-webkit-scrollbar { display: none; }
   .anchors::before { display: none; }
   .anchor {
-    width: auto; min-height: 44px; padding: 13px 16px; flex: 0 0 auto;
-    border-radius: var(--r-sm);
+    width: auto; min-height: 46px; padding: 14px 17px; flex: 0 0 auto;
   }
   .anchor i { display: none; }
   .anchor span { margin: 0; }
-  .lamp {
-    margin: 0 0 0 auto; flex: 0 0 auto;
-    width: 40px; height: 40px;
-  }
+  .lamp { margin: 0 0 0 auto; flex: 0 0 auto; width: 44px; height: 44px; }
   .tail { padding-left: 22px; padding-right: 22px; }
   .tail::before { left: 22px; right: 22px; }
-  body { padding-bottom: calc(78px + env(safe-area-inset-bottom)); }
+  body { padding-bottom: calc(84px + env(safe-area-inset-bottom)); }
   .slip {
     left: 16px; right: 16px; max-width: none;
-    bottom: calc(88px + env(safe-area-inset-bottom));
+    bottom: calc(94px + env(safe-area-inset-bottom));
   }
   .open__step { top: auto; bottom: calc(50% - 56px); }
 }
@@ -581,21 +666,26 @@ code { font: 300 .86em/1 var(--data); color: var(--ink-dim); }
   .hero__cord { left: 22px; right: 22px; }
   .hero__read { gap: 8px 18px; }
 }
-/* the dock occupies the bottom of a phone, so the whole stack rides higher */
+
+/* the bar of clay occupies the bottom of a phone, so the stack rides higher */
 @media (max-width: 880px) and (min-height: 621px) {
-  .hero { padding-bottom: clamp(296px, 36vh, 380px); }
-  .hero__cord { bottom: clamp(236px, 29vh, 306px); }
-  .hero__strip { bottom: calc(92px + env(safe-area-inset-bottom)); }
+  .hero { padding-bottom: clamp(306px, 37vh, 392px); }
+  .hero__cord { bottom: clamp(246px, 30vh, 316px); }
+  .hero__strip { bottom: calc(98px + env(safe-area-inset-bottom)); }
 }
-/* a short window has no room for the slot at all; the cord comes back down */
+/* a short window has no room for the strip at all */
 @media (max-height: 620px) {
   .hero__strip { display: none; }
-  .hero { padding-bottom: clamp(136px, 22vh, 190px); }
-  .hero__cord { bottom: clamp(100px, 16vh, 142px); }
+  .hero { padding-bottom: clamp(144px, 23vh, 198px); }
+  .hero__cord { bottom: clamp(104px, 16vh, 146px); }
 }
+
+/* --------------------------------------------------------------- opt-outs */
 
 @media (prefers-reduced-motion: reduce) {
   .hero__track { animation: none; }
+  .hero__title, .hero__by, .hero__lede, .hero__quote,
+  .hero__strip, .run__year, .run__said { translate: none !important; }
   *, *::before, *::after {
     animation-duration: .01ms !important;
     transition-duration: .01ms !important;
@@ -603,18 +693,19 @@ code { font: 300 .86em/1 var(--data); color: var(--ink-dim); }
   }
 }
 
-/* Relief is light pretending to be geometry, and a high-contrast user has
-   already told us the pretence is not working. Give them the edges back. */
+/* Clay is a soft shape made entirely of soft light, and a high-contrast
+   user has said soft light is not reaching them. Give them hard edges. */
 @media (prefers-contrast: more) {
   :root {
-    --raise:    0 0 0 1px var(--ink-dim);
-    --raise-sm: 0 0 0 1px var(--ink-dim);
-    --press:    inset 0 0 0 1px var(--ink-dim);
-    --well:     inset 0 0 0 1px var(--ink-dim);
-    --groove-h: inset 0 0 0 1px var(--ink-dim);
-    --groove-v: inset 0 0 0 1px var(--ink-dim);
-    --bead:     0 0 0 1px var(--ink-dim);
+    --clay-lg:    0 0 0 2px var(--ink-dim);
+    --clay-md:    0 0 0 2px var(--ink-dim);
+    --clay-sm:    0 0 0 2px var(--ink-dim);
+    --clay-in:    inset 0 0 0 2px var(--ink-dim);
+    --clay-in-sm: inset 0 0 0 2px var(--ink-dim);
   }
-  .run__year { color: var(--gold); text-shadow: none; }
-  .hero__title { text-shadow: none; }
+  .anchors::after, .lamp::after, .key::after { display: none; }
+  .anchor.is-at { box-shadow: inset 0 0 0 2px var(--gold); }
+  .hero__cord, .run__cord, .tail::before { background: var(--ink-dim); box-shadow: none; }
+  .pane__frame::before { box-shadow: inset 0 0 0 1px var(--ink-dim); }
+  .open__stage img { box-shadow: 0 0 0 2px var(--ink-dim); }
 }

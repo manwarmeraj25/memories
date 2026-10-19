@@ -124,10 +124,11 @@ python3 scripts/build.py
   that link goes directly to that photograph.
 - **Keyboard** — tabbing to a photograph that is currently gathered pulls the
   cord to it, so the whole archive is reachable without a mouse.
-- **The room follows your system** — soft charcoal at night, pearl by day,
-  with the light always falling from the upper left so the relief holds. The
-  photographs are the only colour either way. The switch at the bottom of the
-  year rail overrides it, and the choice is remembered per browser.
+- **The room follows your system** — violet clay fired dark at night,
+  unfired and pale by day. Everything is a thick soft lump lit from inside
+  its top edge. The switch at the bottom of the year rail overrides it, and
+  the choice is remembered per browser. If you have turned up contrast, the
+  clay flattens to hard outlines instead.
 
 ## On a phone
 

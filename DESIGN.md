@@ -18,75 +18,95 @@ This file describes the world as built. `PRODUCT.md` owns product truth;
   furniture that holds photographs.
 - An earlier revision of this file refused *any* object metaphor. That no
   longer holds and saying so would be a lie: at the owner's request the page
-  is now built in relief (see **Relief** below). The distinction that
-  survives is between a thing and a material — the page is one sheet with
-  things raised out of it, not an album, a frame or a mount.
+  has been built in relief, then in glass, and is now modelled in clay (see
+  **Material**). What survives of the refusal is only this — the page is a
+  material, not a piece of furniture. It is not an album, and the clay lip
+  around a photograph is a lip, not a mount.
 - Cream, beige and warm-bookish grounds, which is where this subject pulls by
-  default and where the album build landed.
+  default and where the album build landed. The table is violet, not beige,
+  for exactly that reason.
 
 ## Palette
 
-Soft charcoal at night, pearl silk by day. Gold is the only accent and it is
-**always a control or a position marker** — a bead, a node, an attribution.
-It is never decoration and never a glow.
+Clay has to be tinted. Grey clay gives the inner light and the inner shade
+nothing to read against, and the whole material collapses into neumorphism.
+The table is a soft violet with three lumps of colour worked into it —
+periwinkle, a warm ochre and a cool green — and gold stays the only accent,
+**always a control or a position marker**, never decoration.
 
 | | night | day |
 |---|---|---|
-| silk (the sheet) | `#1A1D21` | `#E3E5E7` |
-| shadow (cut into it) | `#121417` | `#D4D8DC` |
-| gold | `#D4AF37` | `#6B5310` |
-| graphite | `#2B2E33` | `#BFC3C8` |
-| slate | `#4A5158` | `#7E858C` |
-| ink | `#C7C9CC` | `#1B1E21` |
-| ink-dim | `#8A9096` | `#4E545B` |
+| silk (the table) | `#1C1930` | `#E7E5F4` |
+| shadow (what a photograph is pressed into) | `#15122A` | `#D5D0EA` |
+| clay (the body of a lump) | `#282443` | `#EFEDFA` |
+| gold | `#E2BE5A` | `#7A5A12` |
+| graphite | `#342F52` | `#C6C1E0` |
+| slate | `#6B6391` | `#8A84AC` |
+| ink | `#EDEAF8` | `#211D33` |
+| ink-dim | `#A9A2C6` | `#55506E` |
 
-The night ground used to be silk black `#080900`. It had to come up off black
-to carry relief at all: an extruded surface needs a shadow *darker* than the
-sheet it sits on, and nothing is darker than black. `--shadow` stopped being
-"the deep behind the photographs" and became the floor of every channel and
-trough — it is now one step *down* from the sheet rather than the bottom of
-the world.
+The ground has now moved three times — silk black `#080900`, up to `#1A1D21`
+so relief had something to cast onto, across to `#12151A` plus an
+environment for glass to sample, and now to violet because clay is coloured
+or it is nothing. Night gold was brightened to `#E2BE5A`; the old `#D4AF37`
+sat flat against indigo.
 
-Text on a gold ground is tinted from the gold (`--on-gold`), never a neutral
-grey. Measured in the browser, every text pairing clears 4.5:1 in both themes
-(worst case 5.3:1, `--ink-dim` on the night sheet) and the two non-text
-carriers of meaning — the resting nav node and the year numeral — clear 3:1
-(worst case 3.2:1, the year in daylight).
+Measured in the browser, every text pairing clears 4.5:1 on both the table
+and the clay, in both themes — worst case 5.1:1, gold on the daylight table.
+The nav bead clears the 3:1 non-text floor; `--slate` measured **2.64:1** on
+night clay and was replaced with `--ink-dim` there.
 
-## Relief
+## Material
 
-Nothing on this page is drawn with a border. A thing is either raised out of
-the sheet or pressed into it, and the light always comes from the upper left.
-Four recipes cover the whole surface:
+Everything is a lump of clay: thick, opaque, tinted, lit from inside its top
+edge, shaded inside its lower right, and dropped onto a wide coloured
+shadow. Nothing has a border and nothing is transparent.
 
 | token | what it is | where |
 |---|---|---|
-| `--raise` | extruded slab | photographs, the year rail, the slip, the opened photograph |
-| `--raise-sm` | a low lift | the lamp, the three keys, a hovered year |
-| `--press` | sunk panel | the measure readout, the drifting slot, the caption trough, the year you are in |
-| `--groove-h` / `--groove-v` | a narrow cut | the cord, the channel down the year rail, the seam above the tail |
-| `--bead` | a small sphere | every gold node |
+| `--clay-lg` | a big lump | photographs, the year rail |
+| `--clay-md` | a medium lump | the slip, a hovered key or lamp |
+| `--clay-sm` | a small lump | keys, the lamp, the cord, a hovered year |
+| `--clay-in` | a thumbprint pushed in | the measure readout, the caption bar, the year you are in |
+| `--clay-in-sm` | a shallow thumbprint | the cord pressed into the rail, the seam above the tail, anything `:active` |
 
-The grooves and the bead exist because `--press` and `--raise-sm` do not
-scale down. Their blur is 7–10px, which is wider than a 10px cord or a 9px
-bead — applied there the shadow floods the whole element and it reads as a
-raised pill rather than a cut. A narrow cut gets one tight shadow on its
-upper lip and one lit lip just outside it; a bead gets a highlight on its
-crown and a short drop.
+The three sizes exist because the inner pair has to scale with the object.
+The full-size light-and-shade inside a 46px button fills it solid and the
+thing stops reading as clay at all — the same failure the groove tokens
+solved in the relief build, arrived at from the other direction.
 
-Relief is light pretending to be geometry, and it is a weak affordance. Two
-things hold the line against that:
+Pressing is real: keys and years squash (`scale`) *and* invert to a
+thumbprint under `:active`, and the year you are in stays pressed with its
+bead sitting proud of the dent.
 
-- **Focus stays a hard edge.** `:focus-visible` is a 2px gold outline at 4px
-  offset — the one real border on the page, and deliberately not softened.
-- **`prefers-contrast: more` gives the edges back.** All five relief tokens
-  collapse to a 1px `--ink-dim` ring, the year numeral goes solid gold, and
-  the embossed title drops its shadow. A user who has said the trick is not
-  working for them stops being shown the trick.
+Depth is parallax, carried over from the glass build and toned down: the
+pointer publishes `--px` / `--py` on the root and the hero reads them in CSS
+— title 10px, lede 6px, the year numeral 3px, the drifting strip 12px the
+other way. One rAF, one cached rect, nothing on a touchscreen.
 
-Pressing is also a real state, not a hover tint: the year you are in is
-pressed into the rail with its bead raised out of the channel, and keys,
-photographs and years all travel under `:active`.
+### The photographs
+
+A photograph sits in an 11px lip of clay with the picture pressed down into
+it, and the whole lump takes the gather's dimming rather than just the
+picture — a lit bezel around a darkened photograph reads as a frame, which
+is the one thing this page refuses.
+
+This is the closest the design has come to the mount it rejects, and the lip
+is thin on purpose. It is a judgement call, and it is the cost of the
+material.
+
+### Opt-outs
+
+Clay is a soft shape made entirely of soft light.
+
+- **`prefers-contrast: more`** — all five recipes collapse to 2px `--ink-dim`
+  rings, the warm-hand highlight goes off, the cords become solid rules, and
+  the selected year is outlined in gold.
+- **`prefers-reduced-motion`** — the drift and the parallax stop. The clay
+  stays, because the clay is not motion.
+
+Focus never participates: `:focus-visible` is a 3px gold outline at 5px
+offset, the only hard edge on the page.
 
 ## Type
 
@@ -151,15 +171,15 @@ note and quote beneath it, cord and thread at 62%. That vertical separation is
 load-bearing: an earlier arrangement put the text in a left column and the
 gathered panes swept straight over it.
 
-The year rail is fixed chrome at the left — a moulded strip lifted off the
-page, with a channel carved down its spine. Photographs pass behind it rather
-than through it, so it needs no scrim. Years rest as flush nodes in that
-channel; the one you are in is a gold bead raised out of it, in a row that is
-pressed into the strip. On a phone the same strip re-moulds as a dock lifted
-off the bottom edge.
+The year rail is fixed chrome at the left — one thick slab of clay with the
+cord rolled into its face. Photographs pass behind it, and because the clay
+is opaque it needs no scrim. Each year is a bead on that cord, and the one
+you are in is a thumbprint pressed into the slab with its bead gold and
+sitting proud of the dent. On a phone the same slab is re-rolled as a bar of
+clay lying along the bottom edge.
 
-Because the rail is now a solid object with a shadow rather than a gradient
-over the ground, the text column was moved right to clear it: `--gutter` runs
+Because the rail is a solid object with a shadow rather than a gradient over
+the ground, the text column was moved right to clear it: `--gutter` runs
 116px → 164px at its narrowest.
 
 ## Motion
@@ -170,9 +190,14 @@ plane. `will-change` is set only on panes within 1.6 steps of centre and
 cleared as they settle. There are no section-entrance fades and no hover
 transitions on every element.
 
+Pointer parallax is the page's other motion, and it is CSS reading two
+custom properties rather than anything animating — see **Depth**.
+
 Under `prefers-reduced-motion`, on a phone, or in a short window, nothing
 gathers: the plane lies flat and scrolls as a column of photographs. That is a
-complete layout, not a degraded one.
+complete layout, not a degraded one. Reduced motion also stops the drift and
+the parallax outright; the material and its depth stay, because they are
+static.
 
 ## Addressing
 
